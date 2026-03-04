@@ -32,18 +32,29 @@ export function subscribeToPachangas(
   onData: (pachangas: Pachanga[]) => void,
   onError: (error: Error) => void,
 ): Unsubscribe {
-  const q = query(collection(db, COLLECTION), orderBy('date', 'asc'));
+  if (!db || !('type' in db)) {
+    // db not initialized (env vars missing) — return empty data immediately
+    onData([]);
+    return () => {};
+  }
 
-  return onSnapshot(
-    q,
-    (snapshot) => {
-      const pachangas = snapshot.docs.map((doc) =>
-        toPachanga(doc.id, doc.data() as PachangaDoc),
-      );
-      onData(pachangas);
-    },
-    (err) => onError(err),
-  );
+  try {
+    const q = query(collection(db, COLLECTION), orderBy('date', 'asc'));
+
+    return onSnapshot(
+      q,
+      (snapshot) => {
+        const pachangas = snapshot.docs.map((doc) =>
+          toPachanga(doc.id, doc.data() as PachangaDoc),
+        );
+        onData(pachangas);
+      },
+      (err) => onError(err),
+    );
+  } catch (err) {
+    onError(err instanceof Error ? err : new Error(String(err)));
+    return () => {};
+  }
 }
 
 /**
