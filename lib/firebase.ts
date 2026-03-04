@@ -1,4 +1,4 @@
-import { initializeApp, getApps } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
@@ -12,9 +12,15 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Prevent re-initializing on hot reload
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+// Skip initialization during SSR prerendering when env vars are not available
+const canInitialize = typeof window !== 'undefined' || !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
-export const auth = getAuth(app);
+const app = canInitialize
+  ? getApps().length
+    ? getApp()
+    : initializeApp(firebaseConfig)
+  : undefined;
+
+export const auth = app ? getAuth(app) : ({} as ReturnType<typeof getAuth>);
 export const googleProvider = new GoogleAuthProvider();
-export const db = getFirestore(app);
+export const db = app ? getFirestore(app) : ({} as ReturnType<typeof getFirestore>);
