@@ -91,7 +91,7 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
             <textarea
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              placeholder={'🎾 Samu\n🎾 Carlos\n🎾 Dani\n🎾 Eli C.\n\nSolo se leen las líneas con 🎾'}
+              placeholder={'🎾Jugador 1\n🎾 Jugador 2\n🎾 Jugador 3\n🎾 Jugador 4\n\nSolo se leen las líneas con 🎾'}
               rows={7}
               className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-beer resize-none font-medium leading-6"
             />
