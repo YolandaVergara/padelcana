@@ -12,7 +12,7 @@ export default function LoginScreen() {
         <div className="flex flex-col items-center gap-2">
           <span className="text-7xl">🎾</span>
           <h1 className="text-beer font-black text-5xl tracking-tight">
-            PadelCaña
+            Entre pistas y birras
           </h1>
           <p className="text-white/40 text-sm font-semibold tracking-widest uppercase">
             Generador de pachangas

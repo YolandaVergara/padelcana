@@ -10,7 +10,7 @@ import type { AuthUser } from '@/types/auth';
 /** Usuarios desactivados temporalmente — usuario fijo anónimo */
 const ANONYMOUS_USER: AuthUser = {
   uid: 'anonymous',
-  displayName: 'PadelCaña',
+  displayName: 'Entre pistas y birras',
   email: null,
   photoURL: null,
 };
@@ -30,24 +30,24 @@ function AppContent() {
         {/* Header */}
         <header className="text-center mb-8 flex flex-col items-center gap-3">
           <h1 className="text-beer font-black text-5xl sm:text-6xl tracking-tight drop-shadow-lg">
-            🎾 PadelCaña
+            🎾 Entre pistas y birras
           </h1>
           <p className="text-white/50 text-xs font-semibold tracking-widest uppercase">
             Generador de pachangas
           </p>
         </header>
 
-        {/* Loading */}
-        {loading && (
-          <div className="flex justify-center py-16">
-            <span className="text-beer text-3xl animate-pulse">⏳</span>
+        {/* Error */}
+        {error && (
+          <div className="bg-red-500/20 border border-red-400/30 text-red-200 rounded-2xl px-5 py-4 text-sm font-medium text-center">
+            ⚠️ {error}
           </div>
         )}
 
-        {/* Error */}
-        {!loading && error && (
-          <div className="bg-red-500/20 border border-red-400/30 text-red-200 rounded-2xl px-5 py-4 text-sm font-medium text-center">
-            ⚠️ {error}
+        {/* Loading spinner — only while waiting and no data */}
+        {loading && !activePachanga && !error && (
+          <div className="flex justify-center py-16">
+            <span className="text-beer text-3xl animate-pulse">⏳</span>
           </div>
         )}
 
@@ -63,7 +63,7 @@ function AppContent() {
         )}
 
         {/* Active pachanga */}
-        {!loading && activePachanga && <PachangaView pachanga={activePachanga} />}
+        {activePachanga && <PachangaView pachanga={activePachanga} />}
       </div>
 
       {/* ── FAB row ──────────────────────────────────────────── */}
