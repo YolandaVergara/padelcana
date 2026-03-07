@@ -26,11 +26,6 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
   });
   const [rawText, setRawText] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [confirmReplace, setConfirmReplace] = useState(false);
-
-  // Reset confirm state when date changes
-  useEffect(() => { setConfirmReplace(false); }, [selectedDate]);
-
   // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -40,20 +35,15 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
 
   // Live preview of parsed names
   const parsedPlayers = parsePlayers(rawText);
+  const courts = Math.floor(parsedPlayers.length / 4);
+  const activeCount = courts * 4;
+  const sittingOut = parsedPlayers.slice(activeCount);
 
   const handleSave = async () => {
     setError(null);
-
-    // Require explicit confirmation when replacing an existing active pachanga
-    if (activePachanga && !confirmReplace) {
-      setConfirmReplace(true);
-      return;
-    }
-
     const result = await onUpsert({ date: selectedDate, players: parsedPlayers });
     if (result) {
       setError(result);
-      setConfirmReplace(false);
     } else {
       onClose();
     }
@@ -79,12 +69,8 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
         <div className="px-6 py-6 flex flex-col gap-5 overflow-y-auto">
           {/* Replace warning */}
           {activePachanga && (
-            <div className={`rounded-xl px-4 py-3 text-sm font-medium border ${confirmReplace ? 'bg-amber-500/20 border-amber-400/40 text-amber-200' : 'bg-white/5 border-white/10 text-white/60'}`}>
-              {confirmReplace ? (
-                <>⚠️ <strong>¿Seguro?</strong> La pachanga del <strong>{formatShortDate(activePachanga.date.toDate())}</strong> será <strong>reemplazada</strong>. Pulsa «Guardar» para confirmar.</>
-              ) : (
-                <>📅 Ya hay una pachanga activa el <strong className="text-white/80">{formatShortDate(activePachanga.date.toDate())}</strong>. Al guardar la reemplazarás.</>
-              )}
+            <div className="rounded-xl px-4 py-3 text-sm font-medium border bg-amber-500/20 border-amber-400/40 text-amber-200">
+              ⚠️ Ya hay una pachanga el <strong>{formatShortDate(activePachanga.date.toDate())}</strong>. Al guardar la reemplazarás.
             </div>
           )}
 
@@ -105,7 +91,7 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
             <textarea
               value={rawText}
               onChange={(e) => setRawText(e.target.value)}
-              placeholder={'🎾 1. Carlos\n🎾 2. Laura\n- Miguel\n• Sofía\nAna'}
+              placeholder={'🎾 Samu\n🎾 Carlos\n🎾 Dani\n🎾 Eli C.\n\nSolo se leen las líneas con 🎾'}
               rows={7}
               className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-beer resize-none font-medium leading-6"
             />
@@ -113,13 +99,25 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
             {parsedPlayers.length > 0 && (
               <div className="bg-white/5 rounded-xl px-4 py-3 flex flex-col gap-1">
                 <p className="text-white/40 text-xs uppercase tracking-widest font-semibold mb-1">
-                  {parsedPlayers.length} jugadores detectados
+                  {parsedPlayers.length} apuntados · {courts} {courts === 1 ? 'pista' : 'pistas'}
                 </p>
-                {parsedPlayers.map((p, i) => (
+                {parsedPlayers.slice(0, activeCount).map((p, i) => (
                   <span key={i} className="text-white/80 text-sm font-medium">
                     {i + 1}. {p}
                   </span>
                 ))}
+                {sittingOut.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-white/10">
+                    <p className="text-amber-400/80 text-xs uppercase tracking-widest font-semibold mb-1">
+                      Se quedan fuera ({sittingOut.length})
+                    </p>
+                    {sittingOut.map((p, i) => (
+                      <span key={i} className="text-amber-300/70 text-sm font-medium block">
+                        ⏳ {p}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -142,14 +140,9 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
           <button
             onClick={handleSave}
             disabled={upserting}
-            className={`
-              flex-1 rounded-xl font-black py-3 uppercase tracking-wide
-              transition-all duration-200 hover:brightness-105 hover:scale-[1.02]
-              active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed
-              ${confirmReplace ? 'bg-amber-400 text-gray-900' : 'bg-beer text-court'}
-            `}
+            className="flex-1 rounded-xl font-black py-3 uppercase tracking-wide bg-beer text-court transition-all duration-200 hover:brightness-105 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {upserting ? '⏳ Guardando…' : confirmReplace ? '⚠️ Sí, reemplazar' : '🎾 Guardar'}
+            {upserting ? '⏳ Guardando…' : '🎾 Guardar'}
           </button>
         </div>
       </div>
