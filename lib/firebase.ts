@@ -12,15 +12,8 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Skip initialization during SSR prerendering when env vars are not available
-const canInitialize = typeof window !== 'undefined' || !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-const app = canInitialize
-  ? getApps().length
-    ? getApp()
-    : initializeApp(firebaseConfig)
-  : undefined;
-
-export const auth = app ? getAuth(app) : ({} as ReturnType<typeof getAuth>);
+export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
-export const db = app ? getFirestore(app) : ({} as ReturnType<typeof getFirestore>);
+export const db = getFirestore(app);
