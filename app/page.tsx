@@ -44,15 +44,15 @@ function AppContent() {
           </div>
         )}
 
-        {/* Loading spinner — only while waiting and no data */}
-        {loading && !activePachanga && !error && (
-          <div className="flex justify-center py-16">
-            <span className="text-beer text-3xl animate-pulse">⏳</span>
+        {/* Loading spinner — only while waiting and there is existing data */}
+        {loading && activePachanga && (
+          <div className="flex justify-center py-4">
+            <span className="text-beer text-xl animate-pulse">⏳</span>
           </div>
         )}
 
         {/* Empty state */}
-        {!loading && !error && !activePachanga && (
+        {!activePachanga && !error && (
           <div className="text-center py-16 flex flex-col items-center gap-4">
             <span className="text-6xl">🏔️</span>
             <p className="text-white/50 font-semibold">Aún no hay ninguna pachanga.</p>
