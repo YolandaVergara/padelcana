@@ -1,6 +1,6 @@
 {
-  "name": "PadelCaña",
-  "short_name": "PadelCaña",
+  "name": "Entre pistas y birras",
+  "short_name": "Entre pistas y birras",
   "description": "Generador de pachangas de pádel para amigos",
   "start_url": "/",
   "display": "standalone",
