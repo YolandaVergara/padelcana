@@ -1,83 +1,43 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import {
-  subscribeToPachangas,
-  upsertActivePachanga,
-} from '@/lib/pachangas.service';
-import { validateInput } from '@/lib/generateMatches';
+import { useState, useCallback } from 'react';
+import { validateInput, generatePachanga } from '@/lib/generateMatches';
 import type { Pachanga, CreatePachangaInput } from '@/types/pachanga';
-import type { AuthUser } from '@/types/auth';
 
 interface UsePachangasReturn {
-  /** All pachangas ordered by date ascending */
-  pachangas: Pachanga[];
-  /** The single upcoming pachanga (date >= today) */
+  /** The currently generated pachanga (null until one is created) */
   activePachanga: Pachanga | null;
-  /** Past pachangas sorted newest-first */
-  historico: Pachanga[];
-  loading: boolean;
-  error: string | null;
-  /**
-   * Creates or replaces the active pachanga.
-   * If a future pachanga already exists, it is deleted before creating the new one.
-   * Returns null on success, or an error string on failure.
-   */
+  /** Generates a new pachanga and replaces the current one in memory */
   upsert: (input: CreatePachangaInput) => Promise<string | null>;
   upserting: boolean;
 }
 
-export function usePachangas(user: AuthUser): UsePachangasReturn {
-  const [pachangas, setPachangas] = useState<Pachanga[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export function usePachangas(): UsePachangasReturn {
+  const [activePachanga, setActivePachanga] = useState<Pachanga | null>(null);
   const [upserting, setUpserting] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = subscribeToPachangas(
-      (data) => {
-        setPachangas(data);
-        setLoading(false);
-      },
-      (err) => {
-        setError(err.message);
-        setLoading(false);
-      },
-    );
-    return unsubscribe;
+  const upsert = useCallback(async (input: CreatePachangaInput): Promise<string | null> => {
+    const validationError = validateInput(input.players);
+    if (validationError) return validationError;
+
+    setUpserting(true);
+    try {
+      const result = generatePachanga(input.players);
+      setActivePachanga({
+        date: input.date,
+        players: input.players,
+        matches: result.matches.map((m) => ({
+          court: m.court,
+          team1: [m.pair1.player1, m.pair1.player2],
+          team2: [m.pair2.player1, m.pair2.player2],
+        })),
+        waiting: result.waiting,
+      });
+      return null;
+    } finally {
+      setUpserting(false);
+    }
   }, []);
 
-  // Compute derived state from the full list
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const activePachanga: Pachanga | null =
-    pachangas.find((p) => p.date.toDate() >= today) ?? null;
-
-  const historico: Pachanga[] = pachangas
-    .filter((p) => p.date.toDate() < today)
-    .slice()
-    .reverse(); // newest first
-
-  const upsert = useCallback(
-    async (input: CreatePachangaInput): Promise<string | null> => {
-      const validationError = validateInput(input.players);
-      if (validationError) return validationError;
-
-      setUpserting(true);
-      try {
-        // Pass the existing active pachanga ID so the service can delete it
-        const existingId = activePachanga?.id ?? null;
-        await upsertActivePachanga(input, user, existingId);
-        return null;
-      } catch (err) {
-        return err instanceof Error ? err.message : 'Error al guardar.';
-      } finally {
-        setUpserting(false);
-      }
-    },
-    [user, activePachanga],
-  );
-
-  return { pachangas, activePachanga, historico, loading, error, upsert, upserting };
+  return { activePachanga, upsert, upserting };
 }

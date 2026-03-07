@@ -15,7 +15,7 @@ import type { Pachanga } from '@/types/pachanga';
  *   Luis y María
  */
 export function formatPachangaMessage(pachanga: Pachanga): string {
-  const date = pachanga.date.toDate();
+  const date = pachanga.date;
 
   const formattedDate = date.toLocaleDateString('es-ES', {
     weekday: 'long',

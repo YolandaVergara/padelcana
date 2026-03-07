@@ -30,7 +30,7 @@ function toMatch(fm: Pachanga['matches'][number]): Match {
 }
 
 export default function PachangaView({ pachanga }: Props) {
-  const pachangaDate = pachanga.date.toDate();
+  const pachangaDate = pachanga.date;
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -48,7 +48,7 @@ export default function PachangaView({ pachanga }: Props) {
           📅 {formatDate(pachangaDate)}
         </p>
         <p className="text-white/35 text-xs mt-1 font-medium">
-          Creada por {pachanga.createdByName} · {pachanga.players.length} jugadores
+          {pachanga.players.length} jugadores
         </p>
       </div>
 

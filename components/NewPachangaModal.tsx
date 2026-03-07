@@ -70,7 +70,7 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
           {/* Replace warning */}
           {activePachanga && (
             <div className="rounded-xl px-4 py-3 text-sm font-medium border bg-amber-500/20 border-amber-400/40 text-amber-200">
-              ⚠️ Ya hay una pachanga el <strong>{formatShortDate(activePachanga.date.toDate())}</strong>. Al guardar la reemplazarás.
+              ⚠️ Ya hay una pachanga el <strong>{formatShortDate(activePachanga.date)}</strong>. Al guardar la reemplazarás.
             </div>
           )}
 

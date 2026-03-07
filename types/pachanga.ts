@@ -1,26 +1,16 @@
-import type { Timestamp } from 'firebase/firestore';
-
-/** Shape stored in each match inside Firestore */
-export interface FirestoreMatch {
+/** Shape of a single match */
+export interface PachangaMatch {
   court: number;
-  team1: string[];
-  team2: string[];
+  team1: [string, string];
+  team2: [string, string];
 }
 
-/** Full Firestore document for a pachanga */
-export interface PachangaDoc {
-  date: Timestamp;
-  createdBy: string;       // uid
-  createdByName: string;   // displayName
-  createdAt: Timestamp;
+/** In-memory representation of a generated pachanga */
+export interface Pachanga {
+  date: Date;
   players: string[];
-  matches: FirestoreMatch[];
+  matches: PachangaMatch[];
   waiting: string[];
-}
-
-/** PachangaDoc enriched with its Firestore document id */
-export interface Pachanga extends PachangaDoc {
-  id: string;
 }
 
 /** Input data required to create a new pachanga */
