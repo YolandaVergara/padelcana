@@ -1,14 +1,11 @@
 import type { User } from 'firebase/auth';
 
-/**
- * Extend this interface in future phases to add roles, subscription tier, etc.
- */
 export interface AuthUser {
   uid: string;
   displayName: string | null;
   email: string | null;
   photoURL: string | null;
-  // role: 'admin' | 'player'  ← example for next phase
+  isAdmin: boolean;
 }
 
 export interface AuthContextValue {
@@ -26,5 +23,6 @@ export function toAuthUser(firebaseUser: User): AuthUser {
     displayName: firebaseUser.displayName,
     email: firebaseUser.email,
     photoURL: firebaseUser.photoURL,
+    isAdmin: firebaseUser.emailVerified && firebaseUser.email === 'yv.avila@gmail.com',
   };
 }

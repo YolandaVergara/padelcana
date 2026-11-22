@@ -31,6 +31,13 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
+### Login de Google y contador de partidos
+
+- Configura `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID` y `NEXT_PUBLIC_FIREBASE_APP_ID` con los valores de la app web de Firebase. Usa `.env.local` en local y las variables del proyecto en Vercel.
+- Habilita Google en Firebase Authentication y añade el dominio de Vercel a los dominios autorizados. Para probar en local, autoriza también `localhost`.
+- En Cloud Firestore, publica el bloque de reglas de `pachangaGenerations` de [firestore.rules](firestore.rules). Si la base ya tiene reglas para otras colecciones, integra el bloque en el conjunto actual. Si este archivo contiene todas las reglas que necesitas, puedes publicarlo con `firebase deploy --only firestore:rules --project padelcana-2635f`.
+- El contador registra un partido por pista al guardar un sorteo y agrupa los registros por día de generación en la zona horaria de Madrid. Los sorteos anteriores a la activación del contador no están registrados.
+
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

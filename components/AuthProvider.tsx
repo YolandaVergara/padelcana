@@ -8,11 +8,13 @@ import {
   useState,
 } from 'react';
 import {
+  getAuth,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
   signOut as firebaseSignOut,
 } from 'firebase/auth';
-import { auth, googleProvider } from '@/lib/firebase';
+import { firebaseConfigured, getFirebaseApp } from '@/lib/firebase';
 import type { AuthContextValue, AuthUser } from '@/types/auth';
 import { toAuthUser } from '@/types/auth';
 
@@ -20,23 +22,23 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(firebaseConfigured);
 
   // Subscribe to Firebase auth state once on mount
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+    if (!firebaseConfigured) return;
+    return onAuthStateChanged(getAuth(getFirebaseApp()), (firebaseUser) => {
       setUser(firebaseUser ? toAuthUser(firebaseUser) : null);
       setLoading(false);
     });
-    return unsubscribe;
   }, []);
 
   const signInWithGoogle = useCallback(async () => {
-    await signInWithPopup(auth, googleProvider);
+    await signInWithPopup(getAuth(getFirebaseApp()), new GoogleAuthProvider());
   }, []);
 
   const signOut = useCallback(async () => {
-    await firebaseSignOut(auth);
+    await firebaseSignOut(getAuth(getFirebaseApp()));
   }, []);
 
   const value = useMemo<AuthContextValue>(

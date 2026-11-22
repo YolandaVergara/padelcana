@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function verifiedGoogleAccount() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+
+    match /pachangaGenerations/{generation} {
+      allow read: if verifiedGoogleAccount()
+        && request.auth.token.email == 'yv.avila@gmail.com';
+
+      allow create: if verifiedGoogleAccount()
+        && request.resource.data.keys().hasOnly(['matchCount', 'generatedAt'])
+        && request.resource.data.matchCount is int
+        && request.resource.data.matchCount > 0
+        && request.resource.data.generatedAt == request.time;
+    }
+  }
+}

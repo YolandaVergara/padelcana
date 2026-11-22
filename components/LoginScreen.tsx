@@ -1,9 +1,25 @@
 'use client';
 
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { firebaseConfigured } from '@/lib/firebase';
 
 export default function LoginScreen() {
   const { signInWithGoogle } = useAuth();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(false);
+
+  async function handleSignIn() {
+    setBusy(true);
+    setError(false);
+    try {
+      await signInWithGoogle();
+    } catch {
+      setError(true);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <main className="min-h-screen bg-court flex items-center justify-center px-4">
@@ -14,7 +30,7 @@ export default function LoginScreen() {
           <h1 className="text-beer font-black text-5xl tracking-tight">
             Entre pistas y birras
           </h1>
-          <p className="text-white/40 text-sm font-semibold tracking-widest uppercase">
+          <p className="text-white/70 text-sm font-semibold tracking-widest uppercase">
             Generador de pachangas
           </p>
         </div>
@@ -24,22 +40,25 @@ export default function LoginScreen() {
 
         {/* Google sign-in */}
         <button
-          onClick={signInWithGoogle}
+          type="button"
+          onClick={handleSignIn}
+          disabled={busy || !firebaseConfigured}
           className="
             w-full flex items-center justify-center gap-3
             bg-white text-gray-800 font-bold text-base
             px-6 py-4 rounded-2xl shadow-xl
             transition-all duration-200
             hover:scale-[1.03] hover:shadow-2xl active:scale-[0.98]
+            focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-beer
+            disabled:opacity-60
           "
         >
           <GoogleIcon />
-          Entrar con Google
+          {busy ? 'Conectando con Google…' : 'Entrar con Google'}
         </button>
 
-        <p className="text-white/25 text-xs">
-          Solo para jugadores del equipo 🏓
-        </p>
+        {!firebaseConfigured && <p role="alert" className="text-amber-200 text-sm">El inicio de sesión está pendiente de configurar.</p>}
+        {error && <p role="alert" className="text-amber-200 text-sm">No se pudo iniciar sesión con Google. Vuelve a intentarlo.</p>}
       </div>
     </main>
   );
