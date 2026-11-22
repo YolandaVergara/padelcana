@@ -8,11 +8,14 @@ import { useAuth } from '@/hooks/useAuth';
 import DailyMatchCounts from '@/components/DailyMatchCounts';
 import LoginScreen from '@/components/LoginScreen';
 import LogoutButton from '@/components/LogoutButton';
+import AdminAccessDenied from '@/components/AdminAccessDenied';
 
 export default function Home() {
   const { user, loading } = useAuth();
   const { activePachanga, upsert } = usePachangas();
   const [showModal, setShowModal] = useState(false);
+
+  if (user && !user.isAdmin) return <AdminAccessDenied />;
 
   return (
     <main className="min-h-screen bg-court px-4 py-8 sm:px-8 sm:py-12 pb-32">

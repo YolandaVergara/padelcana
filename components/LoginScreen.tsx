@@ -22,9 +22,16 @@ export default function LoginScreen() {
   }
 
   return (
-    <details className="max-w-full text-sm">
-      <summary className="cursor-pointer text-white/75 hover:text-white focus-visible:outline-2 focus-visible:outline-beer">
-        Administración
+    <details className="group max-w-full text-sm">
+      <summary className="flex w-fit cursor-pointer list-none items-center gap-2 rounded-full border border-white/20 px-3 py-2 font-medium text-white/80 transition-colors hover:border-beer/50 hover:text-beer focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-beer [&::-webkit-details-marker]:hidden">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4m-4 4v2" />
+        </svg>
+        <span>Administración</span>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="transition-transform group-open:rotate-180 motion-reduce:transition-none">
+          <path d="m4 6 4 4 4-4" />
+        </svg>
       </summary>
       <div className="mt-3 flex flex-col items-start gap-2">
         <button
@@ -33,10 +40,8 @@ export default function LoginScreen() {
           disabled={busy || !firebaseConfigured}
           className="
             flex items-center gap-2
-            bg-white text-gray-800 font-semibold
-            px-3 py-2 rounded-xl
-            transition-all duration-200
-            hover:bg-white/90
+            rounded-xl border border-white/20 bg-white/5 px-3 py-2 font-semibold text-white
+            transition-colors hover:bg-white/10
             focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-beer
             disabled:opacity-60
           "
@@ -54,7 +59,7 @@ export default function LoginScreen() {
 
 function GoogleIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+    <svg width="17" height="17" viewBox="0 0 48 48" aria-hidden="true">
       <path
         fill="#EA4335"
         d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
