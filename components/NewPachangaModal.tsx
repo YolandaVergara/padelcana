@@ -8,8 +8,7 @@ import { parsePlayers } from '@/lib/parsePlayers';
 
 interface Props {
   onClose: () => void;
-  onUpsert: (input: CreatePachangaInput) => Promise<string | null>;
-  upserting: boolean;
+  onUpsert: (input: CreatePachangaInput) => string | null;
   /** Existing active (future) pachanga, if any — shown as a replace warning */
   activePachanga: Pachanga | null;
 }
@@ -18,7 +17,7 @@ function formatShortDate(date: Date): string {
   return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export default function NewPachangaModal({ onClose, onUpsert, upserting, activePachanga }: Props) {
+export default function NewPachangaModal({ onClose, onUpsert, activePachanga }: Props) {
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const d = new Date();
     d.setHours(12, 0, 0, 0);
@@ -39,9 +38,9 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
   const activeCount = courts * 4;
   const sittingOut = parsedPlayers.slice(activeCount);
 
-  const handleSave = async () => {
+  const handleSave = () => {
     setError(null);
-    const result = await onUpsert({ date: selectedDate, players: parsedPlayers });
+    const result = onUpsert({ date: selectedDate, players: parsedPlayers });
     if (result) {
       setError(result);
     } else {
@@ -139,10 +138,9 @@ export default function NewPachangaModal({ onClose, onUpsert, upserting, activeP
           </button>
           <button
             onClick={handleSave}
-            disabled={upserting}
-            className="flex-1 rounded-xl font-black py-3 uppercase tracking-wide bg-beer text-court transition-all duration-200 hover:brightness-105 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 rounded-xl font-black py-3 uppercase tracking-wide bg-beer text-court transition-all duration-200 hover:brightness-105 hover:scale-[1.02] active:scale-[0.98]"
           >
-            {upserting ? '⏳ Guardando…' : '🎾 Guardar'}
+            🎾 Guardar
           </button>
         </div>
       </div>

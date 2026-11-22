@@ -11,8 +11,7 @@ service cloud.firestore {
       allow read: if verifiedGoogleAccount()
         && request.auth.token.email == 'yv.avila@gmail.com';
 
-      allow create: if verifiedGoogleAccount()
-        && request.resource.data.keys().hasOnly(['matchCount', 'generatedAt'])
+      allow create: if request.resource.data.keys().hasOnly(['matchCount', 'generatedAt'])
         && request.resource.data.matchCount is int
         && request.resource.data.matchCount > 0
         && request.resource.data.generatedAt == request.time;

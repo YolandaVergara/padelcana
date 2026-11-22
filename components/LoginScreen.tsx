@@ -22,33 +22,21 @@ export default function LoginScreen() {
   }
 
   return (
-    <main className="min-h-screen bg-court flex items-center justify-center px-4">
-      <div className="w-full max-w-sm flex flex-col items-center gap-8 text-center">
-        {/* Logo */}
-        <div className="flex flex-col items-center gap-2">
-          <span className="text-7xl">🎾</span>
-          <h1 className="text-beer font-black text-5xl tracking-tight">
-            Entre pistas y birras
-          </h1>
-          <p className="text-white/70 text-sm font-semibold tracking-widest uppercase">
-            Generador de pachangas
-          </p>
-        </div>
-
-        {/* Divider */}
-        <div className="w-full h-px bg-white/10" />
-
-        {/* Google sign-in */}
+    <details className="max-w-full text-sm">
+      <summary className="cursor-pointer text-white/75 hover:text-white focus-visible:outline-2 focus-visible:outline-beer">
+        Administración
+      </summary>
+      <div className="mt-3 flex flex-col items-start gap-2">
         <button
           type="button"
           onClick={handleSignIn}
           disabled={busy || !firebaseConfigured}
           className="
-            w-full flex items-center justify-center gap-3
-            bg-white text-gray-800 font-bold text-base
-            px-6 py-4 rounded-2xl shadow-xl
+            flex items-center gap-2
+            bg-white text-gray-800 font-semibold
+            px-3 py-2 rounded-xl
             transition-all duration-200
-            hover:scale-[1.03] hover:shadow-2xl active:scale-[0.98]
+            hover:bg-white/90
             focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-beer
             disabled:opacity-60
           "
@@ -60,7 +48,7 @@ export default function LoginScreen() {
         {!firebaseConfigured && <p role="alert" className="text-amber-200 text-sm">El inicio de sesión está pendiente de configurar.</p>}
         {error && <p role="alert" className="text-amber-200 text-sm">No se pudo iniciar sesión con Google. Vuelve a intentarlo.</p>}
       </div>
-    </main>
+    </details>
   );
 }
 

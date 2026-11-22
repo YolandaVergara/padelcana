@@ -11,26 +11,12 @@ import LogoutButton from '@/components/LogoutButton';
 
 export default function Home() {
   const { user, loading } = useAuth();
-
-  if (loading) {
-    return <main className="min-h-screen bg-court grid place-items-center text-white/80" role="status">Cargando sesión…</main>;
-  }
-
-  if (!user) return <LoginScreen />;
-
-  return <AppContent key={user.uid} isAdmin={user.isAdmin} />;
-}
-
-function AppContent({ isAdmin }: { isAdmin: boolean }) {
-  const { activePachanga, upsert, upserting } = usePachangas();
+  const { activePachanga, upsert } = usePachangas();
   const [showModal, setShowModal] = useState(false);
 
   return (
     <main className="min-h-screen bg-court px-4 py-8 sm:px-8 sm:py-12 pb-32">
       <div className="mx-auto max-w-xl">
-        <div className="mb-4 flex justify-end">
-          <LogoutButton />
-        </div>
         {/* Header */}
         <header className="text-center mb-8 flex flex-col items-center gap-3">
           <h1 className="text-beer font-black text-5xl sm:text-6xl tracking-tight drop-shadow-lg">
@@ -41,7 +27,7 @@ function AppContent({ isAdmin }: { isAdmin: boolean }) {
           </p>
         </header>
 
-        {isAdmin && <DailyMatchCounts />}
+        {user?.isAdmin && <DailyMatchCounts />}
 
         {/* Empty state */}
         {!activePachanga && (
@@ -56,6 +42,12 @@ function AppContent({ isAdmin }: { isAdmin: boolean }) {
 
         {/* Active pachanga */}
         {activePachanga && <PachangaView pachanga={activePachanga} />}
+
+        {!loading && (
+          <footer className="mt-8 flex justify-start">
+            {user ? <LogoutButton /> : <LoginScreen />}
+          </footer>
+        )}
       </div>
 
       {/* FAB */}
@@ -78,7 +70,6 @@ function AppContent({ isAdmin }: { isAdmin: boolean }) {
         <NewPachangaModal
           onClose={() => setShowModal(false)}
           onUpsert={upsert}
-          upserting={upserting}
           activePachanga={activePachanga}
         />
       )}

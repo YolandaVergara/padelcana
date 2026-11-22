@@ -1,5 +1,5 @@
 import { addDoc, collection, getFirestore, onSnapshot, query, serverTimestamp, where } from 'firebase/firestore';
-import { getFirebaseApp } from './firebase';
+import { firebaseConfigured, getFirebaseApp } from './firebase';
 
 const madridDate = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Europe/Madrid',
@@ -17,6 +17,7 @@ function generations() {
 }
 
 export async function recordGeneration(matchCount: number) {
+  if (!firebaseConfigured) return;
   await addDoc(generations(), { matchCount, generatedAt: serverTimestamp() });
 }
 
