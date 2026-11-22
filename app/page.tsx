@@ -6,12 +6,12 @@ import NewPachangaModal from '@/components/NewPachangaModal';
 import { usePachangas } from '@/hooks/usePachangas';
 import { useAuth } from '@/hooks/useAuth';
 import DailyMatchCounts from '@/components/DailyMatchCounts';
-import LoginScreen from '@/components/LoginScreen';
+import PachangaTitle from '@/components/PachangaTitle';
 import LogoutButton from '@/components/LogoutButton';
 import AdminAccessDenied from '@/components/AdminAccessDenied';
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const { activePachanga, upsert } = usePachangas();
   const [showModal, setShowModal] = useState(false);
 
@@ -22,9 +22,7 @@ export default function Home() {
       <div className="mx-auto max-w-xl">
         {/* Header */}
         <header className="text-center mb-8 flex flex-col items-center gap-3">
-          <h1 className="text-beer font-black text-5xl sm:text-6xl tracking-tight drop-shadow-lg">
-            🎾 Entre pistas y birras
-          </h1>
+          <PachangaTitle />
           <p className="text-white/50 text-xs font-semibold tracking-widest uppercase">
             Generador de pachangas
           </p>
@@ -46,9 +44,9 @@ export default function Home() {
         {/* Active pachanga */}
         {activePachanga && <PachangaView pachanga={activePachanga} />}
 
-        {!loading && (
+        {user && (
           <footer className="mt-8 flex justify-start">
-            {user ? <LogoutButton /> : <LoginScreen />}
+            <LogoutButton />
           </footer>
         )}
       </div>
