@@ -15,17 +15,33 @@ export function validateInput(players: Player[]): string | null {
 /**
  * Generates a random pachanga.
  * Courts are calculated automatically: Math.floor(players.length / 4).
- * The LAST (players.length % 4) players sit out — they signed up last.
- * Only the players who fit in courts are shuffled for random team assignment.
+ * German and Yol get priority and play on the first and last courts, respectively.
+ * The remaining places go to players in sign-up order before teams are shuffled.
  */
 export function generatePachanga(players: Player[]): PachangaResult {
   const courts = Math.floor(players.length / 4);
   const activeCount = courts * 4;
 
-  // Last n%4 players sit out (preserve sign-up order, they arrived last)
-  const waiting = players.slice(activeCount);
-  // Shuffle only the players who will play, for random court assignment
-  const activePlayers = shuffle(players.slice(0, activeCount));
+  if (courts === 0) return { matches: [], waiting: [...players] };
+
+  const names = players.map((player) => player.trim().toLowerCase());
+  const germanIndex = names.indexOf('german');
+  const yolIndex = names.indexOf('yol');
+  const german = players[germanIndex];
+  const yol = players[yolIndex];
+  const remaining = players.filter((_, index) => index !== germanIndex && index !== yolIndex);
+  const openPlaces = activeCount - Number(germanIndex >= 0) - Number(yolIndex >= 0);
+  const waiting = remaining.slice(openPlaces);
+  const activePlayers = shuffle(remaining.slice(0, openPlaces));
+
+  if (germanIndex >= 0) activePlayers.unshift(german);
+  if (yolIndex >= 0) {
+    const lastCourtStart = activeCount - 4;
+    // Pick a random spot on the last court so Yol can also partner with German.
+    const firstAvailableSpot = courts === 1 && germanIndex >= 0 ? 1 : lastCourtStart;
+    const spot = firstAvailableSpot + Math.floor(Math.random() * (activeCount - firstAvailableSpot));
+    activePlayers.splice(spot, 0, yol);
+  }
 
   // Build pairs (2 players each)
   const pairs: Pair[] = [];
