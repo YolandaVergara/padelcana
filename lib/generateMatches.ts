@@ -25,7 +25,7 @@ export function generatePachanga(players: Player[]): PachangaResult {
   if (courts === 0) return { matches: [], waiting: [...players] };
 
   const names = players.map((player) => player.trim().toLowerCase());
-  const germanIndex = names.indexOf('german');
+  const germanIndex = names.findIndex((name) => name === 'german' || name.normalize('NFC') === 'germán');
   const yolIndex = names.indexOf('yol');
   const german = players[germanIndex];
   const yol = players[yolIndex];
